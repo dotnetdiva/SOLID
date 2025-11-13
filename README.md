@@ -18,3 +18,4 @@ Code examples created for educational use with assistance from OpenAI’s GPT-5 
 All examples are original instructional content written to demonstrate SOLID principles.
 
 
+<img width="746" height="766" alt="output" src="https://github.com/user-attachments/assets/724cea41-985f-46cc-b680-2eda52374d82" />
