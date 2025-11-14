@@ -1,6 +1,6 @@
 # SOLID Principles Demonstration (C# 14 / .NET 10)
 
-This console application demonstrates the five SOLID principles of object-oriented design with concise, educational examples written in C#.
+This console application demonstrates the five SOLID principles of object-oriented design with concise, educational examples written in C# to accompany blog post at https://www.ecahill.com. 
 
 ## Principles Covered
 
