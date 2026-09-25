@@ -1,0 +1,32 @@
+# SOLID repo review: judged as teaching code
+
+## Context
+The repo is a small .NET 10 console app (`Program.cs`, `README.md`) written to go with a blog post that explains the SOLID principles. Its job is to **explain the principles**, not to be production code. So the review asks one question: does each example show the principle clearly to a reader? Production-style nitpicks (redundant `using System;`, null checks, real file I/O) are left out on purpose.
+
+## Findings, most useful first
+
+### Clarity of the lessons (Program.cs)
+1. **OCP (`OpenClosed`, lines 64–94) shows only half the principle.** `IShape`, `Rectangle` and `Circle` show that the code is *open* for extension. Nothing shows that it is *closed* for modification, because no existing code keeps working unchanged when a new shape is added. Fix: add a small `AreaCalculator.TotalArea(IEnumerable<IShape>)` that sums `Area()`, plus a comment: "adding a Triangle needs no change here".
+2. **LSP (`LiskovSubstitution`, lines 96–129) shows inheritance, not substitution.** The demo calls `Move()` on two variables, but nothing takes a `Bird` and works correctly with any subtype. It also never mentions the problem the design avoids: a `Bird.Fly()` that a penguin would have to break by throwing an exception. Fix: add `static void MakeItMove(Bird bird)` and call it with both birds, plus a 2–3 line comment on the `Fly()` violation that this design avoids.
+3. **ISP (`InterfaceSegregation`, lines 131–169) has no contrast.** Two small interfaces look ordinary unless the reader sees the alternative. Fix: add a comment showing the "fat" `IMachine { Print; Scan; Fax; }` that a simple printer would be forced to implement. Optionally add a `MultiFunctionPrinter : IPrinter, IScanner` to show that small interfaces can be combined.
+4. **DIP (`DependencyInversion`, lines 171–210) is correct but doesn't show the payoff.** Fix: add an `SmsService : IMessageService` and send one alert through it, so the reader sees that `Notification` is unchanged.
+5. **SRP (lines 26–62) is clear.** Only optional: add a comment that `FileWriter` simulates the save, since it prints rather than writes a file.
+
+### Correctness
+6. **`Console.ReadKey()` (line 22) throws `InvalidOperationException` when input is redirected.** This happens in the VS Code debug console, CI, and piped runs, so a reader could get a crash at the very end. Fix: `if (!Console.IsInputRedirected) Console.ReadKey();`
+7. **The circle area prints as `28.274333882308138`.** Fix: format both areas with `:F2`, so the reader looks at the principle and not the digits.
+
+### README
+8. **Wording fixes.** "to accompany blog post" should be "to accompany the blog post". Rewrite "Expected output shown but key to understanding is…" as "The expected output is shown below, but the key is relating the code to each principle."
+9. **Missing prerequisite.** Add "Requires the .NET 10 SDK". `dotnet run` builds on its own, so `dotnet build` is optional.
+10. **Out-of-date screenshot.** If findings 1–4 change the console output, the screenshot needs replacing. I can't update the image. You would re-run the app and re-upload it.
+11. **Correct as is:** the Martin (2000/2002) reference and the Liskov & Wing TOPLAS 16(6) 1811–1841 (1994) reference and DOI. The "C# 14 / .NET 10" heading matches `net10.0`.
+
+## Proposed change set (if approved)
+- `Program.cs`: findings 1–4 and 6–7. Each addition stays about 5–15 lines and keeps the current style: nested classes per principle, `Console.WriteLine( … )` spacing, and short comments.
+- `README.md`: findings 8–9, plus a note that the screenshot needs refreshing.
+- Commit to `claude/auto-manual-mode-gmpwup` and push. No PR unless you ask for one.
+
+## Verification
+- `dotnet build` with zero warnings (Nullable is enabled).
+- `dotnet run < /dev/null` to confirm there is no ReadKey crash, then check that each section's output reads clearly.
